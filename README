@@ -1,0 +1,26 @@
+Notes:
+What to still do:
+    models:
+        ReportResource
+    controllers: 
+        authController:
+            POST - register user
+            POST - login user
+        reportController:
+            GET - get all reports
+            GET - get reports by id
+            GET - get reports by counsellor
+            POST - add new report
+            POST - add new counsellor to report (might be in userController)
+            PUT - update report
+            DELETE - delete report
+        messageController:
+            GET - get all messages
+            GET - get message by message id
+            GET - get message by REPORT id
+            POST - send new message
+            DELETE - delete message (soft delete. paranoid:true???)
+    db (NB!!!)
+        change from mysql to msss
+        
+
