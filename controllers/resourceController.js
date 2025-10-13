@@ -1,13 +1,15 @@
-const {ResourceDirectory} = require('../models/ResourceDirectory');
+const db = require('../models');
+const ResourceDirectories = db.ResourceDirectories;
 
-exports.createResource = async (req, res) => {
+exports.CreateResource = async (req, res) => {
   try {
     const resourceData = req.body;
-    const newResource = await ResourceDirectory.create(resourceData);
-    const existing = await ResourceDirectory.findOne({ where: {email: resourceData.email}});
+    const existing = await ResourceDirectories.findOne({ where: {email: resourceData.email}});
     if (exisitng){
         return res.status(409).json({error: 'Resource already exists.'})
     }
+    const newResource = await ResourceDirectories.create(resourceData);
+
     return res.status(201).json({
         message: 'Resource created successfully',
         resource: {
@@ -15,7 +17,7 @@ exports.createResource = async (req, res) => {
       name: newResource.name,
       type: newResource.type,
       description: newResource.description,
-      phone: newResource.phone,
+      phone_number: newResource.phone_number,
       email: newResource.email,
       address: newResource.address,
       website: newResource.website
@@ -33,7 +35,7 @@ exports.GetAllResources = async (req,res) =>{
     const {type } = req.query;
         const where = type ? {type} : {}; //??
         
-        const resources = await ResourceDirectory.findAll(
+        const resources = await ResourceDirectories.findAll(
             {where}
         );
         return res.status(200).json(resources);
@@ -48,12 +50,12 @@ exports.GetAllResources = async (req,res) =>{
 exports.GetResourceById = async (req, res) => {
     try{
         const resourceId = req.params.id;
-        const resource = await ResourceDirectory.findByPk(resourceId)
+        const resource = await ResourceDirectories.findByPk(resourceId)
 
         if (!resource){
             return res.status(400).json({error: 'Resource not found'})
         }
-        return res.status(201).json(resource);
+        return res.status(200).json(resource);
     }catch (error)
     {
         console.error('Error fetching resource by Id', error);
@@ -73,12 +75,12 @@ exports.UdpateResourceById = async (req, res) =>{
             }
         }
 
-        const resource = await ResourceDirectory.findByPk(resourceId);
+        const resource = await ResourceDirectories.findByPk(resourceId);
 
         if(!resource){
             return res.status(404).json({error: 'Resource Not Found'});
         }
-        await resource.update(updates);
+        await resource.update(updates, { validate: false });
         return res.status(200).json({message: 'Resource updated successfully.',resource});
     }
     catch(error){
@@ -90,7 +92,7 @@ exports.UdpateResourceById = async (req, res) =>{
 exports.DeleteResourceById = async (req, res) =>{
     try{
         const resourceId = req.params.id;
-        const resource = await ResourceDirectory.findByPk(resourceId);
+        const resource = await ResourceDirectories.findByPk(resourceId);
         if(!resource){
             return res.status(404).json({error: 'Resource Not Found', error})
         }else{
@@ -102,3 +104,5 @@ exports.DeleteResourceById = async (req, res) =>{
         return res.status(500).json({error: 'Internal Server Error.'})
     }
 };
+
+//search & pagination - filtering, searcing by name/descpr ect.

@@ -1,26 +1,34 @@
 Notes:
 What to still do:
     models:
-        ReportResource
+
+    services:
+
     controllers: 
         authController:
-            POST - register user
-            POST - login user
         reportController:
-            GET - get all reports
-            GET - get reports by id
-            GET - get reports by counsellor
-            POST - add new report
-            POST - add new counsellor to report (might be in userController)
-            PUT - update report
-            DELETE - delete report
+
         messageController:
-            GET - get all messages
-            GET - get message by message id
-            GET - get message by REPORT id
-            POST - send new message
-            DELETE - delete message (soft delete. paranoid:true???)
-    db (NB!!!)
-        change from mysql to msss
         
+there's still a few things here and there, but it's not major tings. i havne't tested the apis yet.
+
+how to get it to run:
+    node server (in terminal) OR just run in the top left corner
+install:
+    postman (app)
+    
+    vsc dependancies and scripts:
+        npm install bcrypt
+        npm install crypto-js
+        npm install dotenv
+        npm install express
+        npm install jsonwebtoken
+        npm install sequelize
+        npm install tedious
+
+    microsoft sql server:
+        follow email instructions
+    
+
+
 

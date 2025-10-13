@@ -1,21 +1,23 @@
 const bcrypt = require('bcrypt');
-const { User, ResourceDirectory } = require('../models');
-const { validateUserFields } = require('../models/User');
+const db = require('../models');
+const Users = db.Users;
+const ResourceDirectories = db.ResourceDirectories;
+//const { validateUserFields } = require('../models/User');
 
-exports.createUser = async (req, res) => {
+exports.CreateUser = async (req, res) => {
   try {
     const userData = req.body;
     const { role, resource_id } = userData;
 
     if (!userData.is_anonymous) {
-        validateUserFields(userData);
+        //validateUserFields(userData);
     } else {
         userData.name = `Guest_${Date.now()}`
     };
     if (userData.password){
         userData.password = await bcrypt.hash(userData.password, 10);  
     }
-    
+    //email check
     const validRoles = ['survivor', 'counsellor', 'admin'];
     if (role && !validRoles.includes(role)) {
       return res.status(400).json({ error: `Invalid role: ${role}` });
@@ -27,13 +29,13 @@ exports.createUser = async (req, res) => {
         return res.status(400).json({ error: 'Counsellor must be linked to a resource_id' });
       }
 
-      const resourceExists = await ResourceDirectory.findByPk(resource_id);
+      const resourceExists = await ResourceDirectories.findByPk(resource_id);
       if (!resourceExists) {
         return res.status(404).json({ error: 'Provided resource_id does not exist' });
       }
     }
 
-    const newUser = await User.create(userData);
+    const newUser = await Users.create(userData);
     return res.status(201).json({
         message: 'User created successfully',
         user: {
@@ -57,8 +59,8 @@ exports.GetAllUsers = async (req, res) => {
         const role = req.query.role;
         const where = role ? {role} : {}; //??
         
-        const users = await User.findAll(
-            {include: [{model: ResourceDirectory}],
+        const users = await Users.findAll(
+            {include: [{model: ResourceDirectories}],
             where,    
             attributes: {exclude: ['password','email', 'phone']},}
         );
@@ -74,8 +76,8 @@ exports.GetAllUsers = async (req, res) => {
 exports.GetUserById = async (req, res) => {
     try{
         const userId = req.params.id;
-        const user = await User.findByPk(userId, {
-            include: [{model: ResourceDirectory}],
+        const user = await Users.findByPk(userId, {
+            include: [{model: ResourceDirectories}],
             attributes: {exclude: ['password']}
         });
         if (!user){
@@ -90,35 +92,51 @@ exports.GetUserById = async (req, res) => {
 
 }
 
-exports.UdpateUserById = async (req, res) =>{
-    try{
-        const userId = req.params.id;
-        const allowedFields = ['email', 'username']
-        const updates = {};
-        for (let key of allowedFields){
-            if(req.body[key] !== undefined){
-                updates[key] = req.body[key];
-            }
-        }
+exports.UpdateUserById = async (req, res) => {
+  try {
+    const userId = req.params.id;
 
-        const user = await User.findByPk(userId);
+    if (!req.body || typeof req.body !== 'object') {
+      return res.status(400).json({ error: 'Missing or invalid request body' });
+    }
 
-        if(!user){
-            return res.status(400).json({error: 'User Not Found'});
-        }
-        await user.update(updates);
-        return res.status(200).json({message: 'User updated successfully.',user});
+    const allowedFields = ['email', 'username'];
+    const updates = {};
+
+    for (let key of allowedFields) {
+      if (req.body[key] !== undefined) {
+        updates[key] = req.body[key];
+      }
     }
-    catch(error){
-        console.error('Error updating user.', error)
-        return res.status(500).json({error: 'Internal Server Error'})
+
+    if (Object.keys(updates).length === 0) {
+      return res.status(400).json({ error: 'No valid fields provided for update' });
     }
-}
+
+    const user = await Users.findByPk(userId);
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    await user.update(updates, { validate: false });
+
+    return res.status(200).json({
+      message: 'User updated successfully',
+      user,
+    });
+  } catch (error) {
+    console.error('❌ Error updating user:', error.message);
+    console.error(error.stack);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
 
 exports.DeleteUserById = async (req, res) =>{
     try{
         const userId = req.params.id;
-        const user = await User.findByPk(userId);
+        const user = await Users.findByPk(userId);
 
 
         if(!user){
