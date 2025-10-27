@@ -25,10 +25,11 @@ install:
         npm install jsonwebtoken
         npm install sequelize
         npm install tedious
+        npm install nodemailer
 
     microsoft sql server:
         follow email instructions
     
-
+don't forget to undo seeders and migrations!!
 
 

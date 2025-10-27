@@ -6,5 +6,6 @@ const authToken = require('../controllers/middleware/authToken')
 router.put('/:id', authToken,authController.ChangePassword);
 router.post('/login', authController.LoginUser);
 router.post('/register',authController.RegisterUser);
+router.get('/verify-email', authController.VerifyEmail)
 
 module.exports = router;

@@ -105,7 +105,25 @@ exports.LoginUser = async (req,res) =>{
     }
 }
 
+exports.VerifyEmail = async (req, res) =>{
+    try{
+        const {token} = req.query;
+        if(!token)
+            return res.status(400).json({error: 'Verfication token is required.'});
 
+        const user = await db.Users.findOne({where: {verificationToken: token}});
+        if(!user)
+            return res.status(400).json({error: 'Invalid or expired token.'})
+
+        user.isEmailVerified = true;
+        user.status = 'active';
+        user.verificationToken = null;
+        await user.save();
+        res.status(200).json({ message: 'Email verified successfully. You can now log in.' });
+    } catch(err){
+         res.status(500).json({ error: 'Email verification failed', details: err.message });
+    }
+}
 //things to consider adding 03/09/25
 //needed: jwt token generation - login
 //needed: forgot password

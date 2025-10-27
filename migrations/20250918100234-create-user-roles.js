@@ -12,7 +12,6 @@ module.exports = {
       role_name:{
         type: Sequelize.STRING,
         allowNull: false,
-        unique: true,
         validate: {
           isIn: [['survivor', 'counsellor', 'admin']]
         }

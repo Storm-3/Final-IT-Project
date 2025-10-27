@@ -1,9 +1,12 @@
 'use strict';
 
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
+
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.bulkInsert('Users', [
+    const users = [
       {
         password: 'hashed_password_1',
         is_anonymous: false,
@@ -11,7 +14,10 @@ module.exports = {
         email: 'greek.gran@example.com',
         phone: '0821234567',
         role_id: 2, // counsellor
-        resource_id: 1, // Safe Haven Shelter,
+        resource_id: 1, // Safe Haven Shelter
+        status: 'active',
+        isEmailVerified: true,
+        verificationToken: null,
         createdAt: new Date(),
         updatedAt: new Date()
       },
@@ -23,6 +29,9 @@ module.exports = {
         phone: '0839876543',
         role_id: 1, // survivor
         resource_id: 3, // Siyakhula Counselling Services
+        status: 'active',
+        isEmailVerified: true,
+        verificationToken: null,
         createdAt: new Date(),
         updatedAt: new Date()
       },
@@ -34,6 +43,9 @@ module.exports = {
         phone: null,
         role_id: 1, // survivor
         resource_id: null,
+        status: 'active',
+        isEmailVerified: true,
+        verificationToken: null,
         createdAt: new Date(),
         updatedAt: new Date()
       },
@@ -45,14 +57,29 @@ module.exports = {
         phone: '0845556677',
         role_id: 3, // admin
         resource_id: null,
+        status: 'active',
+        isEmailVerified: true,
+        verificationToken: null,
         createdAt: new Date(),
         updatedAt: new Date()
       }
-    ]);
+    ];
+
+    // Hash passwords for all non-anonymous users
+    const hashedUsers = await Promise.all(
+      users.map(async user => {
+        if (user.password) {
+          const hashedPassword = await bcrypt.hash(user.password, saltRounds);
+          return { ...user, password: hashedPassword };
+        }
+        return user;
+      })
+    );
+
+    await queryInterface.bulkInsert('Users', hashedUsers);
   },
 
   async down(queryInterface, Sequelize) {
     await queryInterface.bulkDelete('Users', null, {});
   }
 };
-

@@ -16,7 +16,6 @@ class UserRoles extends Model {
       role_name: {
         type: DataTypes.STRING,
         allowNull: false,
-        unique: true,
         validate: {
           isIn: [['survivor', 'counsellor', 'admin']] // id: 1 - survivor, 2 - counsellor, 3 - admin
         }

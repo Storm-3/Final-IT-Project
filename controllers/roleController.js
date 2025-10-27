@@ -1,5 +1,7 @@
+const { request } = require('express');
 const db = require('../models');
 const UserRoles = db.UserRoles;
+const Users = db.Users
 
 exports.GetAllRoles = async (req, res) => {
   try {
@@ -35,4 +37,30 @@ exports.AssignRoleToUser = async (req, res) => {
   }
 };
 
+exports.AddCounsellor = async (req, res) => {
+  try{
+    const {name, email, phone} = req.body;
+    const existingUser = await db.Users.findOne({where: {email}});
+    if (existingUser)
+      return res.status(400).json({error: 'User with this email already exists.' });
+    const counsellorRole = await UserRoles.findOne({where:{role_name: 'counsellor'}});
+    if (!counsellorRole)
+      return res.status(500).json({error: 'Counsellor role not found.'});
 
+    const verificationToken = require('crypto').randomBytes(32).toString('hex');
+    const newCounsellor = await db.Users.create({
+      name,
+      email,
+      phone,
+      role_id: counsellorRole.id,
+      status, 
+      isEmailVerified,
+      verificationToken, //add
+      
+    })
+    sendEmailVerification(email, verificationToken); //add
+    res.status(201).json({message: 'Counsellor added. Verification email sent.', counsellor: newCounsellor});
+  } catch(err){
+    res.status(500).json({error: 'Failed to add counsellor', details: err.message});
+  }
+};

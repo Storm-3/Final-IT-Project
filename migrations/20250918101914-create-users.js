@@ -1,5 +1,6 @@
 'use strict';
 
+const { SequelizeScopeError } = require('sequelize');
 const { TYPE } = require('tedious/lib/packet');
 
 /** @type {import('sequelize-cli').Migration} */
@@ -54,6 +55,23 @@ module.exports = {
           },
           onUpdate: 'CASCADE',
           onDelete: 'SET NULL'
+        },
+        status: {
+          type: Sequelize.STRING,
+          allowNull: false,
+          defaultValue: 'inactive',
+          validate: {
+            isIn: [['inactive', 'pending', 'active']] 
+           }
+        },
+          isEmailVerified: {
+            type: Sequelize.BOOLEAN,
+            allowNull: false,
+            defaultValue: false
+        },
+        verificationToken:{
+          type: Sequelize.STRING,
+          allowNull: true,
         },
         createdAt: {
             type: Sequelize.DATE,

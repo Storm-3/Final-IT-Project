@@ -6,17 +6,23 @@ const Sequelize = require('sequelize');
 const process = require('process');
 const basename = path.basename(__filename);
 const env = process.env.NODE_ENV || 'development';
-const config = require(path.join(__dirname, '/../config/config.json'))[env];
+const config = require(path.join(__dirname, '/../config/config.js'))[env];
 const db = {};
 
 let sequelize;
-if (config.use_env_variable) {
+
+const rawConfig = require(path.join(__dirname, '/../config/config.js'));
+console.log('🧾 Raw config:', rawConfig);
+console.log('🌍 NODE_ENV:', env);
+console.log('📦 Selected config:', rawConfig[env]);
+
+if (config.use_env_variable && process.env[config.use_env_variable]) {
   sequelize = new Sequelize(process.env[config.use_env_variable], config);
 } else {
   sequelize = new Sequelize(config.database, config.username, config.password, config);
 }
 
-// Phase 1: Load and initialize all models
+
 const modelRegistry = [];
 
 fs.readdirSync(__dirname)
@@ -46,7 +52,6 @@ fs.readdirSync(__dirname)
       candidates.push(required);
     }
 
-    // Handle module.exports = { A, B, C }
     if (required && typeof required === 'object') {
       Object.values(required).forEach(v => {
         if (typeof v === 'function') {
@@ -54,7 +59,6 @@ fs.readdirSync(__dirname)
         }
       });
 
-      // Fallback: single object with initModel
       if (candidates.length === 0 && typeof required.initModel === 'function') {
         candidates.push(required);
       }
@@ -73,7 +77,6 @@ fs.readdirSync(__dirname)
     });
   });
 
-// Phase 2: Register models and wire associations
 Object.keys(sequelize.models).forEach(name => {
   db[name] = sequelize.models[name];
 });
