@@ -1,7 +1,9 @@
 const { request } = require('express');
 const db = require('../models');
 const UserRoles = db.UserRoles;
-const Users = db.Users
+const Users = db.Users;
+const bcrypt = require('bcrypt');
+
 
 exports.GetAllRoles = async (req, res) => {
   try {
@@ -37,30 +39,56 @@ exports.AssignRoleToUser = async (req, res) => {
   }
 };
 
-exports.AddCounsellor = async (req, res) => {
-  try{
-    const {name, email, phone} = req.body;
-    const existingUser = await db.Users.findOne({where: {email}});
-    if (existingUser)
-      return res.status(400).json({error: 'User with this email already exists.' });
-    const counsellorRole = await UserRoles.findOne({where:{role_name: 'counsellor'}});
-    if (!counsellorRole)
-      return res.status(500).json({error: 'Counsellor role not found.'});
-
-    const verificationToken = require('crypto').randomBytes(32).toString('hex');
-    const newCounsellor = await db.Users.create({
+exports.AddUserWithRole = async (req, res) => {
+  try {
+    const {
       name,
       email,
       phone,
-      role_id: counsellorRole.id,
-      status, 
+      password,
+      role = 'counsellor', // default to counsellor if not specified
+      resource_id = null,
+      status = 'pending',
+      isEmailVerified = false
+    } = req.body;
+
+    const existingUser = await Users.findOne({ where: { email } });
+    if (existingUser)
+      return res.status(400).json({ error: 'User with this email already exists.' });
+
+    const roleRecord = await UserRoles.findOne({ where: { role_name: role } });
+    if (!roleRecord)
+      return res.status(500).json({ error: `Role '${role}' not found.` });
+
+    const rawPassword = password || require('crypto').randomBytes(8).toString('hex');
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(rawPassword, saltRounds);
+
+    const verificationToken = require('crypto').randomBytes(32).toString('hex');
+
+    const newUser = await Users.create({
+      name,
+      email,
+      password: hashedPassword,
+      phone,
+      role_id: roleRecord.id,
+      resource_id,
+      status,
       isEmailVerified,
-      verificationToken, //add
-      
-    })
-    sendEmailVerification(email, verificationToken); //add
-    res.status(201).json({message: 'Counsellor added. Verification email sent.', counsellor: newCounsellor});
-  } catch(err){
-    res.status(500).json({error: 'Failed to add counsellor', details: err.message});
+      verificationToken,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    });
+
+    //sendEmailVerification(email, verificationToken); ----uncomment when not testing.
+
+    res.status(201).json({
+      message: `${role.charAt(0).toUpperCase() + role.slice(1)} added. Verification email sent.`,
+      user: newUser
+    });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to add user', details: err.message });
   }
 };
+
+

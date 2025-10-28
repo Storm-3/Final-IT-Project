@@ -9,7 +9,7 @@ class Users extends Model {
         Users.belongsTo(models.ResourceDirectories, { foreignKey: 'resource_id' });
         
         // User <-o UserRole
-        //Users.belongsTo(models.UserRoles, { foreignKey: 'role_id' });
+        Users.belongsTo(models.UserRoles, { foreignKey: 'role_id' });
 
         // User o-> Reports (as reporter)
         Users.hasMany(models.Reports, { foreignKey: 'user_id', as: 'madeReports' });

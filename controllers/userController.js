@@ -9,7 +9,7 @@ const jwt = require('jsonwebtoken');
 
 const secretKey = process.env.JWT_SECRET || 'yourSecretKey';
 
-exports.CreateUser = async (req, res) => {
+exports.CreateAvgUser = async (req, res) => {
   try {
     const userData = { ...req.body };
 

@@ -86,7 +86,8 @@ exports.LoginUser = async (req,res) =>{
             return res.status(401).json({message: "Incorrect Email or Password."})
         }
         const token = jwt.sign(
-            {   userId: user.id,
+            {   
+                userId: user.id,
                 roleId: user.role_id,
                 email: user.email
             },

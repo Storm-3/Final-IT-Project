@@ -2,11 +2,11 @@ const express = require('express');
 const router = express.Router();
 const roleController = require('../controllers/roleController');
 const authToken = require('../controllers/middleware/authToken');
-const authorizeRoles = require('../controllers/middleware/authRoles')
+const authRoles = require('../controllers/middleware/authRoles')
 
-router.get('/', roleController.GetAllRoles);
+router.get('/', authToken, authRoles('admin'), roleController.GetAllRoles);
+router.post('/admin',authToken, authRoles('admin'), roleController.AddUserWithRole);
 router.get('/:id', roleController.GetRoleById);
-router.post('/:id',roleController.AssignRoleToUser);
-router.post('/admin/counsellors',authToken, authorizeRoles('admin'), roleController.AddCounsellor);
+router.post('/:id',authToken, authRoles('admin'),roleController.AssignRoleToUser);
 
 module.exports = router;
