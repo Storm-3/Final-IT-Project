@@ -1,30 +1,11 @@
 version: '3.8'
-services:
-  gbv-app:
-    build: .
-    ports:
-      - "3000:3000"
-    depends_on:
-      - db
-    environment:
-      NODE_ENV: development
-      DB_USER: sa
-      DB_PASSWORD: "User_password123!"     # must meet MSSQL password policy
-      DB_NAME: gbv_db
-      DB_HOST: db
-      DB_PORT: 1433
-      FRONTEND_URL: http://localhost:3000
-      # add SMTP_* envs if you want email from container
-      # SMTP_HOST: smtp.example.com
-      # SMTP_PORT: 587
-      # SMTP_USER: you
-      # SMTP_PASS: pass
-    restart: unless-stopped
 
+services:
   db:
     image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: gbv_sqlserver
     environment:
-      SA_PASSWORD: "User_password123!"   # must meet complexity (min 8, uppercase, lowercase, digit, symbol)
+      SA_PASSWORD: "User_password123!"   # must meet MSSQL complexity rules
       ACCEPT_EULA: "Y"
     ports:
       - "1433:1433"
