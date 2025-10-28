@@ -33,6 +33,8 @@ class Users extends Model {
             as: 'receivedMessages',
             onDelete: 'CASCADE' // making sure every message related to user is (soft) deleted
         });
+        //User o-> Articles
+        Users.hasMany(models.Articles, {foreignKey: 'user_id'});
 
         const { Model } = require('sequelize');
 
