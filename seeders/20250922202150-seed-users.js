@@ -8,6 +8,7 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     const users = [
       {
+        sendbird_id:'counsellor_1',
         password: 'hashed_password_1',
         is_anonymous: false,
         name: 'Greek Gran',
@@ -22,6 +23,7 @@ module.exports = {
         updatedAt: new Date()
       },
       {
+        sendbird_id:'survivor_2',
         password: 'Password123',
         is_anonymous: false,
         name: 'The Lawyer',
@@ -32,10 +34,12 @@ module.exports = {
         status: 'active',
         isEmailVerified: true,
         verificationToken: null,
+        emergency_contact: '0192837745',
         createdAt: new Date(),
         updatedAt: new Date()
       },
       {
+        sendbird_id:'survivor_3',
         password: null,
         is_anonymous: true,
         name: null,
@@ -50,6 +54,7 @@ module.exports = {
         updatedAt: new Date()
       },
       {
+        sendbird_id:'admin_4',
         password: '123Password',
         is_anonymous: false,
         name: 'Bleek.',

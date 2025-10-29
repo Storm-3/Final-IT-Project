@@ -13,6 +13,11 @@ module.exports = {
           primaryKey: true,
           autoIncrement: true
         },
+        sendbird_id:{
+          type: Sequelize.STRING,
+          allowNull:false,
+          unique:true
+        },
         password: {
           type: Sequelize.STRING,
           allowNull: true,
@@ -72,6 +77,10 @@ module.exports = {
         verificationToken:{
           type: Sequelize.STRING,
           allowNull: true,
+        },
+        emergency_contact:{
+          type: Sequelize.STRING,
+          allowNull:true
         },
         createdAt: {
             type: Sequelize.DATE,

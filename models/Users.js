@@ -58,6 +58,11 @@ class Users extends Model {
                 primaryKey: true,
                 autoIncrement: true
             },
+            sendbird_id: {
+                type: DataTypes.STRING,
+                allowNull: false,
+                unique: true
+            },
             password: {
                 type: DataTypes.STRING,
                 allowNull: true
@@ -107,6 +112,10 @@ class Users extends Model {
             verificationToken:{
                 type: DataTypes.STRING,
                 allowNull: true,
+            },
+            emergency_contact:{
+                type: DataTypes.STRING,
+                allowNull: true
             }
         }, {
             sequelize,
@@ -127,6 +136,12 @@ class Users extends Model {
                             throw new Error('Admins are required to provide their name and email.');
                         }
                     }
+
+                    if (this.role_id !== 1){
+                        if (this.emergency_contact !== null){
+                            throw new Error('Only survivors can have emergency contacts');
+                        }
+                    }
                 },
 
                 emailvalidation() {
@@ -138,6 +153,9 @@ class Users extends Model {
                 phonevalidation() {
                     if (this.phone && !phoneRegex.test(this.phone)) {
                         throw new Error('Invalid phone');
+                    }
+                    if (this.emergency_contact && !phoneRegex.test(this.emergency_contact)) {
+                        throw new Error('Invalid emergency contact');
                     }
                     // front: no dashes, no letters.
                     // front: for email and phone, use placeholders

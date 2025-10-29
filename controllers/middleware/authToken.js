@@ -16,7 +16,11 @@ const authToken = (req, res, next) => {
     // 🔍 Add this line to inspect the decoded payload
     console.log("authToken decoded payload:", decoded);
 
-    req.user = decoded; // attach user info to request
+    req.user = {
+      id: decoded.userId,
+      roleId: decoded.roleId,
+      email: decoded.email
+  };
     next();
   } catch (err) {
     return res.status(403).json({ message: "Token is invalid or expired." });

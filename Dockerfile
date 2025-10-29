@@ -25,9 +25,9 @@
 # Wait for SQL Server to be reachable then start app
 #CMD [ "sh", "-c", "/usr/local/bin/wait-for-it.sh db:1433 --timeout=60 --strict -- npm start" ]
 
-git init
-git add docker-compose.yml
-git add .env -f
+#git init
+#git add docker-compose.yml
+#git add .env -f
 
-git add migrations/ seeders/ README.md
-git commit -m "Add SQL Server container setup"
+#git add migrations/ seeders/ README.md
+#git commit -m "Add SQL Server container setup"
