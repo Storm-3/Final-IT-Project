@@ -21,6 +21,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/messages', messageRoutes);
 app.use('/api/roles', roleRoutes);
+console.log("📱--- Loading chat routes... ---");
 app.use('/api/chat',chatRoutes);
 app.use('/api/articles',articleRoutes);
 console.log("Routes mounted");
