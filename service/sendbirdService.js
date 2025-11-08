@@ -7,6 +7,7 @@ async function getSendBirdUserId(user) {
 }
 
 async function checkSendBirdUserExists(userId) {
+   console.log('Checking Sendbird user:', userId);
   const response = await fetch(
     `https://api-${process.env.SENDBIRD_APP_ID}.sendbird.com/v3/users/${userId}`,
     {
