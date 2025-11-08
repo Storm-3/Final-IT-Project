@@ -13,6 +13,7 @@ const reportRoutes = require('./routes/reportRoutes');
 const messageRoutes = require("./routes/messageRoutes");
 const roleRoutes = require("./routes/roleRoutes");
 const chatRoutes = require("./routes/chatRoutes");
+const articleRoutes = require("./routes/articleRoutes");
 
 app.use('/api/users', userRoutes);
 app.use('/api/resources', resourceRoutes);
@@ -21,6 +22,7 @@ app.use('/api/reports', reportRoutes);
 app.use('/api/messages', messageRoutes);
 app.use('/api/roles', roleRoutes);
 app.use('/api/chat',chatRoutes);
+app.use('/api/articles',articleRoutes);
 console.log("Routes mounted");
 
 app.use((err, req, res, next) => {

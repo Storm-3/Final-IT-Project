@@ -20,9 +20,9 @@ exports.CreateReport = async (req, res) => {
       evidence_path
     } = req.body;
 
-    if (!description || !location || !incident_type_id || !status_id) {
+    if (!description || !location || !incident_type_id) {
       return res.status(400).json({
-        error: 'Description, location, status, and incident type are required'
+        error: 'Description, location, and incident type are required'
       });
     }
 

@@ -5,10 +5,13 @@ const reportController = require("../controllers/reportController");
 const authToken = require("../controllers/middleware/authToken");
 const authRoles = require("../controllers/middleware/authRoles");
 
-// ADD THIS LINE
+
 router.post("/", authToken, reportController.CreateReport);
 
-router.get("/", reportController.GetAllReports);
+router.get("/",
+  authToken,
+  authRoles("admin"), reportController.GetAllReports);
+
 router.get(
   "/incident-types/location/:location",
   authToken,
@@ -29,7 +32,7 @@ router.get(
 );
 
 router.get("/report/:id", reportController.GetReportById);
-router.get("/counsellor/:id", reportController.GetReportsByCounsellor);
+router.get("/report/counsellor/:id", reportController.GetReportsByCounsellor);
 router.get("/survivor/:id", authToken, reportController.GetReportsBySurvivor);
 router.post(
   "/assign/:id",
