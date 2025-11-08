@@ -71,7 +71,7 @@ module.exports = {
             assigned_counsellor_id: 
             {
                 type: Sequelize.INTEGER,
-                allowNull: false,
+                allowNull: true,
                 references: 
                 {
                     model: 'Users',
