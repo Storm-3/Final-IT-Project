@@ -6,19 +6,24 @@ const Users = db.Users;
 const UserRoles = db.UserRoles;
 const Sequelize = db.Sequelize;
 
+//const defaultStatusId = 1; // Replace with your actual default status ID
+//const finalStatusId = status_id || defaultStatusId;
+
 
 exports.CreateReport = async (req, res) => {
   try {
     const {
-      user_id, // can be null for anonymity, but must be handled
       description,
       date_of_incident,
       location,
-      status_id, // FK to StatusTypes
-      incident_type_id, // FK to IncidentTypes
+      incident_type_id,
       assigned_counsellor_id,
-      evidence_path
+      evidence_path,
     } = req.body;
+
+    console.log('Resolved user_id:', req.user);
+
+    const user_id = req.user?.id || null; // fallback to null for anonymity
 
     if (!description || !location || !incident_type_id) {
       return res.status(400).json({
@@ -26,23 +31,20 @@ exports.CreateReport = async (req, res) => {
       });
     }
 
-    // Optional: validate status and incident type exist
-    const status = await StatusTypes.findByPk(status_id);
     const incidentType = await IncidentTypes.findByPk(incident_type_id);
-
-    if (!status || !incidentType) {
-      return res.status(400).json({ error: 'Invalid status or incident type ID' });
+    if (!incidentType) {
+      return res.status(400).json({ error: 'Invalid incident type ID' });
     }
 
     const newReport = await Reports.create({
-      user_id: user_id || null, // allow null for anonymity
+      user_id,
       description,
       date_of_incident,
       location,
-      status_id,
       incident_type_id,
       assigned_counsellor_id,
-      evidence_path
+      evidence_path,
+      status_id: 1
     });
 
     return res.status(201).json({
