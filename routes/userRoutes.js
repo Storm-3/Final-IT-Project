@@ -6,6 +6,7 @@ const authToken = require("../controllers/middleware/authToken");
 
 // PROTECTED: CRUD for users
 router.get("/", authToken, userController.GetAllUsers);
+router.get("/counsellors", authToken, userController.viewCounsellors);
 router.get("/:id", authToken, userController.GetUserById);
 router.put("/:id", authToken, userController.UpdateUserById);
 router.delete("/:id", authToken, userController.DeleteUserById);

@@ -150,3 +150,17 @@ exports.DeleteUserById = async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 };
+
+exports.viewCounsellors = async (req, res) => {
+  try {
+    const counsellors = await Users.findAll({
+      where: { role_id: 2 }, // Assuming 2 = counsellor
+      attributes: ['id', 'name', 'email'] // Add more if needed
+    });
+
+    res.status(200).json({ counsellors });
+  } catch (error) {
+    console.error('Error fetching counsellors:', error);
+    res.status(500).json({ error: 'Failed to fetch counsellors' });
+  }
+};
