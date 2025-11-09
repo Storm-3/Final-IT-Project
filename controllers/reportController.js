@@ -105,21 +105,16 @@ exports.GetReportsByCounsellor = async (req, res) => {
   try {
     const counsellorId = req.params.id;
 
-    // Validate if user exists and has role 'counsellor'
-    const counsellor = await Users.findOne({
-      where: { id: counsellorId },
-      include: {
-        model: UserRoles,
-        //as: 'role',
-        attributes: ['role_name']
-      }
-    });
+    const counsellor = await Users.findByPk(counsellorId);
 
-    if (!counsellor || counsellor.UserRoles.role_name.toLowerCase() !== 'counsellor') {
+    if (!counsellor) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    if (counsellor.role_id !== 2) {
       return res.status(403).json({ error: 'User is not a counsellor' });
     }
 
-    // Fetch reports linked to this counsellor
     const reports = await Reports.findAll({
       where: { assigned_counsellor_id: counsellorId }
     });
@@ -130,7 +125,7 @@ exports.GetReportsByCounsellor = async (req, res) => {
 
     return res.status(200).json(reports);
   } catch (error) {
-    console.error('Error fetching reports by counsellor ID:', error);
+    console.error('Error fetching reports for counsellor:', error);
     return res.status(500).json({ error: 'Internal Server Error' });
   }
 };
