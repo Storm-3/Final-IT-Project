@@ -14,16 +14,19 @@ exports.CreateReport = async (req, res) => {
   try {
     const {
       description,
-      date_of_incident,
+      date_of_incident: rawDate,
       location,
       incident_type_id,
       assigned_counsellor_id,
       evidence_path,
     } = req.body;
 
+    // 🩹 Patch: Normalize empty date string
+    const date_of_incident = rawDate && rawDate.trim() !== "" ? rawDate : null;
+
     console.log('Resolved user_id:', req.user);
 
-    const user_id = req.user?.id || null; // fallback to null for anonymity
+    const user_id = req.user?.id || null;
 
     if (!description || !location || !incident_type_id) {
       return res.status(400).json({
@@ -39,7 +42,7 @@ exports.CreateReport = async (req, res) => {
     const newReport = await Reports.create({
       user_id,
       description,
-      date_of_incident,
+      date_of_incident, // ✅ Now safely null if empty
       location,
       incident_type_id,
       assigned_counsellor_id,
@@ -56,7 +59,6 @@ exports.CreateReport = async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 };
-
 
 exports.GetAllReports = async (req, res) => {
   try {
@@ -345,3 +347,4 @@ exports.getIncidentTypes = async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 };
+

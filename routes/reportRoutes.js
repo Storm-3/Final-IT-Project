@@ -7,6 +7,7 @@ const authRoles = require("../controllers/middleware/authRoles");
 
 
 router.post("/", authToken, reportController.CreateReport);
+
 router.get("/types", reportController.getIncidentTypes);
 router.get("/",
   authToken,
