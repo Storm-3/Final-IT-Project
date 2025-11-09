@@ -164,25 +164,25 @@ exports.GetReportsBySurvivor = async (req, res) => {
 };
 
 exports.AssignCounsellorToReport = async (req, res) => {
-  try{
-    const { reportId} = req.params;
-    const {counsellorId} = req.body; //difference between req.params and body?
+  try {
+    const { id: reportId } = req.params;
+    const { counsellorId } = req.body; // Correct: from JSON
+
 
     const report = await Reports.findByPk(reportId);
-    if(!report){
-      return res.status(404).json({error: "Report Not Found."})
+    if (!report) {
+      return res.status(404).json({ error: "Report Not Found." });
     }
 
-    const counsellor = await Users.findOne({
-      where: {id: counsellorId}, //find a key where it equals the counsellor key
-      include: [UserRoles]
-    });
+    const counsellor = await Users.findByPk(counsellorId);
+    if (!counsellor) {
+      return res.status(404).json({ error: "Counsellor user not found" });
+    }
 
-    if (!counsellor || counsellor.UserRoles.name.toLowerCase() !== 'counsellor') {
+    if (counsellor.role_id !== 2) { 
       return res.status(403).json({ error: 'User is not a counsellor' });
     }
 
-    // Assign counsellor to report
     report.counsellor_id = counsellorId;
     await report.save();
 

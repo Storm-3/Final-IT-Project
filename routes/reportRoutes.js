@@ -31,8 +31,8 @@ router.get(
   reportController.GetIncidentTypeSummary
 );
 
-router.get("/report/:id", reportController.GetReportById);
-router.get("/report/counsellor/:id", reportController.GetReportsByCounsellor);
+router.get("/:id", reportController.GetReportById);
+router.get("/counsellor/:id", reportController.GetReportsByCounsellor);
 router.get("/survivor/:id", authToken, reportController.GetReportsBySurvivor);
 router.post(
   "/assign/:id",
