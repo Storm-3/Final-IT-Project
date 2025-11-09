@@ -332,4 +332,16 @@ exports.GetIncidentTypeSummary = async (req, res) => {
   }
 };
 
+exports.getIncidentTypes = async (req, res) => {
+  try {
+    // Fetch incident types from the database with id and name
+    const incidentTypes = await IncidentTypes.findAll({
+      attributes: ['id', 'name']
+    });
 
+    res.status(200).json({ incidentTypes });
+  } catch (error) {
+    console.error('Error fetching incident types:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
