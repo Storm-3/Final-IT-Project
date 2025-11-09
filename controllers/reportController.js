@@ -136,31 +136,27 @@ exports.GetReportsBySurvivor = async (req, res) => {
   try {
     const survivorId = req.params.id;
 
-    // Validate if user exists and has role 'survivor'
-    const survivor = await Users.findOne({
-      where: { id: survivorId },
-      include: {
-        model: UserRoles,
-        attributes: ['role_name']
-      }
-    });
+    const survivor = await Users.findByPk(survivorId);
 
-    if (!survivor || survivor.UserRoles.role_name.toLowerCase() !== 'survivor') {
+    if (!survivor) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    if (survivor.role_id !== 1) {
       return res.status(403).json({ error: 'User is not a survivor' });
     }
 
-    // Fetch reports linked to this survivor
     const reports = await Reports.findAll({
       where: { user_id: survivorId }
     });
 
     if (!reports || reports.length === 0) {
-      return res.status(404).json({ error: 'No reports found for this counsellor' });
+      return res.status(404).json({ error: 'No reports found for this user.' });
     }
 
     return res.status(200).json(reports);
   } catch (error) {
-    console.error('Error fetching reports by counsellor ID:', error);
+    console.error('Error fetching reports for survivor:', error);
     return res.status(500).json({ error: 'Internal Server Error' });
   }
 };

@@ -12,7 +12,7 @@ module.exports = {
         password: 'hashed_password_1',
         is_anonymous: false,
         name: 'Greek Gran',
-        email: 'greek.gran@example.com',
+        email: 'greek.girl@example.com',
         phone: '0821234567',
         role_id: 2, // counsellor
         resource_id: 1, // Safe Haven Shelter
@@ -58,7 +58,7 @@ module.exports = {
         password: '123Password',
         is_anonymous: false,
         name: 'Bleek.',
-        email: 'nota.gun@example.com',
+        email: 'bleek@example.com',
         phone: '0845556677',
         role_id: 3, // admin
         resource_id: null,

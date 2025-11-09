@@ -34,13 +34,6 @@ class Articles extends Model {
 
       // Validation logic
       validate: {
-        async counsellorOnly() {
-          const user = await sequelize.models.Users.findByPk(this.user_id);
-          if (!user || user.role_id !== 2) {
-            throw new Error('Only counsellors can create articles.');
-          }
-        },
-
         titleLength() {
           if (this.title && this.title.length < 10) {
             throw new Error('Article title must be at least 10 characters long.');

@@ -22,8 +22,10 @@ exports.getAllArticles = async (req, res) => {
 
 exports.createArticle = async (req, res) => { 
     try { 
-        const { user_id, title, content } = req.body; 
-        if (!user_id || !title || !content) 
+        const {title, content } = req.body; 
+        const user_id = req.user.id;
+
+        if (!title || !content) 
             { return res.status(400).json({ message: 'All fields are required.' }); 
 } 
 // 2. Fix the model name
