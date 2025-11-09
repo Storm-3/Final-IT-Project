@@ -67,44 +67,56 @@ exports.RegisterUser = async (req,res) =>{
     }
 };
 
-exports.LoginUser = async (req,res) =>{
-    try{
-        const {email, password} = req.body;
-        //Checking if user has filled necessary fields
-        if (!email || !password) {
-            return res.status(400).json({message: "Email and password are required."})
-        }
-        //find user by email
-        const user = await Users.findOne({where: {email}});
-        if (!user){
-            return res.status(404).json({message: "User Not Found."})
-        }
+exports.LoginUser = async (req, res) => {
+  try {
+    const { email, password } = req.body;
 
-        //compare password
-        const doesPassMatch = await bcrypt.compare(password, user.password);
-        if (!doesPassMatch){
-            return res.status(401).json({message: "Incorrect Email or Password."})
-        }
-        const token = jwt.sign(
-            {   
-                userId: user.id,
-                roleId: user.role_id,
-                email: user.email
-            },
-            process.env.JWT_SECRET,
-            {expiresIn: process.env.JWT_EXPIRES_IN || '1hr'}
-        )
-
-        //success
-        return res.status(200).json({message: "User logged in successfully.", userId: user.id, token});
-
-       
+    if (!email || !password) {
+      return res.status(400).json({ message: "Email and password are required." });
     }
-    catch(error){
-        console.error("Login Error:", error);
-        res.status(500).json({message: "Internal Server Error."})
+
+    // 🔍 Log the incoming email
+    console.log("Looking for email:", email);
+
+    const user = await Users.findOne({ where: { email } });
+
+    // 🔍 Log the result of the lookup
+    console.log("Found user:", user);
+
+    if (!user) {
+      return res.status(404).json({ message: "User Not Found." });
     }
-}
+
+    const doesPassMatch = await bcrypt.compare(password, user.password);
+    if (!doesPassMatch) {
+      return res.status(401).json({ message: "Incorrect Email or Password." });
+    }
+
+    const token = jwt.sign(
+      {
+        userId: user.id,
+        roleId: user.role_id,
+        email: user.email
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: process.env.JWT_EXPIRES_IN || '1hr' }
+    );
+
+    return res.status(200).json({
+      message: "User logged in successfully.",
+      user: {
+        id: user.id,
+        roleId: user.role_id,
+        email: user.email
+      },
+      token
+    });
+
+  } catch (error) {
+    console.error("Login Error:", error);
+    res.status(500).json({ message: "Internal Server Error." });
+  }
+};
 
 exports.VerifyEmail = async (req, res) =>{
     try{

@@ -11,7 +11,7 @@ module.exports = {
         sendbird_id:'counsellor_1',
         password: 'hashed_password_1',
         is_anonymous: false,
-        name: 'Greek Gran',
+        name: 'Greek Girl',
         email: 'greek.girl@example.com',
         phone: '0821234567',
         role_id: 2, // counsellor

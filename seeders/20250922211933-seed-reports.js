@@ -12,7 +12,7 @@ module.exports = {
         location: 'KwaZakhele, Gqeberha',
         incident_type_id: 1, // Physical Abuse
         status_id: 1, // Pending
-        assigned_counsellor_id: 2,
+        assigned_counsellor_id: 1,
         evidence_path: null,
         is_anonymous: false,
         createdAt: new Date(),
@@ -26,7 +26,7 @@ module.exports = {
         location: 'Motherwell, Gqeberha',
         incident_type_id: 5, // Financial Abuse
         status_id: 2, // In Progress
-        assigned_counsellor_id: 4,
+        assigned_counsellor_id: 1,
         evidence_path: 'uploads/evidence_002.jpg',
         is_anonymous: true,
         createdAt: new Date(),
