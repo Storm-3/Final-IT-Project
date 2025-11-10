@@ -36,7 +36,8 @@ class Users extends Model {
         id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
         sendbird_id: { 
           type: DataTypes.STRING, 
-          allowNull: true,
+          allowNull: false, 
+          unique: true
            
         },
         password: { type: DataTypes.STRING, allowNull: true },
