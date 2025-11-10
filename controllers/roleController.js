@@ -3,6 +3,7 @@ const db = require('../models');
 const UserRoles = db.UserRoles;
 const Users = db.Users;
 const bcrypt = require('bcrypt');
+const { v4: uuidv4 } = require("uuid");
 
 
 exports.GetAllRoles = async (req, res) => {
@@ -51,6 +52,7 @@ exports.AddUserWithRole = async (req, res) => {
       status = 'pending',
       isEmailVerified = false
     } = req.body;
+    const sendbird_id = uuidv4();
 
     const existingUser = await Users.findOne({ where: { email } });
     if (existingUser)
@@ -72,6 +74,7 @@ exports.AddUserWithRole = async (req, res) => {
       password: hashedPassword,
       phone,
       role_id: roleRecord.id,
+      specified_id: sendbird_id,
       resource_id,
       status,
       isEmailVerified,
