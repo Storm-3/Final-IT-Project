@@ -34,7 +34,11 @@ class Users extends Model {
     Users.init(
       {
         id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-        sendbird_id: { type: DataTypes.STRING, allowNull: true },
+        sendbird_id: { 
+          type: DataTypes.STRING, 
+          allowNull: true,
+           
+        },
         password: { type: DataTypes.STRING, allowNull: true },
         is_anonymous: {
           type: DataTypes.BOOLEAN,
