@@ -26,10 +26,10 @@ The platform aims to increase reporting by offering:
 South Africa faces one of the highest rates of GBV globally. Survivors often face barriers to reporting, including fear of retaliation and social stigma. Existing reporting methods are often inaccessible or unsafe. This platform addresses these challenges by providing a discreet, accessible, and trustworthy alternative to empower survivors and improve response efforts.
 
 ## Technologies Used
-* Frontend: React Native
+* Frontend: Android Studio
 * Backend: Node.js
-* Database: MySQL
-* Security: CryptoJS
+* Database: MSSQL
+* Security: Bcyrpt
 * APIs: Google Maps
 
 
