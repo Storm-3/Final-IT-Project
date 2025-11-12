@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 const {Users} = require('../models');
 const jwt = require('jsonwebtoken')
 require('dotenv').config();
+const { v4: uuidv4 } = require("uuid");
 
 exports.ChangePassword = async (req, res) => {
     try {

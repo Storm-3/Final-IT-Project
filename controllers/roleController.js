@@ -80,7 +80,8 @@ exports.AddUserWithRole = async (req, res) => {
       isEmailVerified,
       verificationToken,
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
+      sendbird_id: uuidv4()
     });
 
     //sendEmailVerification(email, verificationToken); ----uncomment when not testing.
