@@ -34,7 +34,7 @@ class Users extends Model {
     Users.init(
       {
         id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-        sendbird_id: { 
+        stream_id: { 
           type: DataTypes.STRING, 
           allowNull: false, 
           unique: true

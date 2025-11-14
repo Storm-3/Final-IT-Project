@@ -13,7 +13,7 @@ module.exports = {
           primaryKey: true,
           autoIncrement: true
         },
-        sendbird_id:{
+        stream_id:{
           type: Sequelize.STRING,
           allowNull:false,
           unique:true

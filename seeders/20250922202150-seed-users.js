@@ -8,7 +8,7 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     const users = [
       {
-        sendbird_id:'counsellor_1',
+        stream_id:'counsellor_1',
         password: 'hashed_password_1',
         is_anonymous: false,
         name: 'Greek Girl',
@@ -23,7 +23,7 @@ module.exports = {
         updatedAt: new Date()
       },
       {
-        sendbird_id:'survivor_2',
+        stream_id:'survivor_2',
         password: 'Password123',
         is_anonymous: false,
         name: 'The Lawyer',
@@ -39,22 +39,23 @@ module.exports = {
         updatedAt: new Date()
       },
       {
-        sendbird_id:'survivor_3',
-        password: null,
-        is_anonymous: true,
-        name: null,
-        email: null,
-        phone: null,
-        role_id: 1, // survivor
-        resource_id: null,
-        status: 'active',
-        isEmailVerified: true,
-        verificationToken: null,
-        createdAt: new Date(),
-        updatedAt: new Date()
+       stream_id:'survivor_3',
+       password: null,
+       is_anonymous: true,
+       name: null,
+       email: null,
+       phone: null,
+       role_id: 1, // survivor
+       resource_id: null,
+       status: 'active',
+       isEmailVerified: true,
+       emergency_contact: null,
+       verificationToken: null,
+       createdAt: new Date(),
+       updatedAt: new Date()
       },
       {
-        sendbird_id:'admin_4',
+        stream_id:'admin_4',
         password: '123Password',
         is_anonymous: false,
         name: 'Bleek.',
@@ -80,8 +81,14 @@ module.exports = {
         return user;
       })
     );
-
-    await queryInterface.bulkInsert('Users', hashedUsers);
+    for (const user of hashedUsers) {
+    try {
+      await queryInterface.bulkInsert('Users', [user], { validate: false });
+    } catch (error) {
+      console.error(`Error inserting user ${user.stream_id}:`, error);
+    }
+  }
+    //await queryInterface.bulkInsert('Users', hashedUsers);
   },
 
   async down(queryInterface, Sequelize) {

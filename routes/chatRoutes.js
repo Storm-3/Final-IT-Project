@@ -5,13 +5,8 @@ const router = express.Router();
 const chatController = require("../controllers/chatController");
 const authToken = require("../controllers/middleware/authToken");
 
-// Start a chat
+// Start a stream chat session
 router.post("/start", authToken, chatController.startChat);
-
-// Issue a SendBird token
-router.post("/token", authToken, chatController.issueChatToken);
-
-// Send a message
-router.post("/message", authToken, chatController.sendMessage);
+router.post("/send", authToken, chatController.sendMessage);
 
 module.exports = router;

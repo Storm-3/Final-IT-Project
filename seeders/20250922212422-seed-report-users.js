@@ -11,13 +11,13 @@ module.exports = {
       await queryInterface.bulkInsert('ReportUsers', [
         {
           reportId: 1,
-          userId: 3,
+          userId: 2,
           createdAt: timestamp,
           updatedAt: timestamp,
         },
         {
           reportId: 2,
-          userId: 1,
+          userId: 3,
           createdAt: timestamp,
           updatedAt: timestamp,
         },

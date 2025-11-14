@@ -1,4 +1,4 @@
-const sendbirdService = require("../service/sendbirdService");
+const streamService = require("../service/streamService"); 
 const db = require("../models");
 
 // Start a chat between two users
@@ -15,28 +15,28 @@ exports.startChat = async (req, res) => {
       return res.status(404).json({ error: "User or report not found" });
     }
 
-    // Provision SendBird users (creates if doesn't exist)
-    const sendbirdId1 = await sendbirdService.provisionSendBirdUser(user1);
-    const sendbirdId2 = await sendbirdService.provisionSendBirdUser(user2);
+    // Provision Stream users (creates if doesn't exist)
+    const streamId1 = await streamService.provisionStreamUser(user1);
+    const streamId2 = await streamService.provisionStreamUser(user2);
 
     // Get session token for the initiating user
-    const sessionToken = await sendbirdService.getSendbirdSessionToken(
-      sendbirdId1
+    const sessionToken = await streamService.getStreamSessionToken(
+      streamId1
     );
 
-    // Create channel via REST API
-    const channel = await sendbirdService.createChannel(
-      [sendbirdId1, sendbirdId2],
+    // Create channel
+    const channel = await streamService.createChannel(
+      [streamId1, streamId2],
       "Report Chat",
-      report.id,
-      [sendbirdId1, sendbirdId2]
+      report.id
     );
 
-    // SendBird REST API returns `channel_url`, not `url`
+    // Stream returns 'id' for the channel ID
     res.status(200).json({
-      channelUrl: channel.channel_url, // FIXED: Use channel_url
+      channelId: channel.id, // <-- FIXED: Use channel.id
       sessionToken,
-      sendbirdId: sendbirdId1,
+      streamId: streamId1,
+      streamApiKey: process.env.STREAM_API_KEY, // Send API key to client
     });
   } catch (err) {
     console.error("startChat error:", err);
@@ -50,10 +50,16 @@ exports.issueChatToken = async (req, res) => {
     const user = await db.Users.findByPk(req.user.id);
     if (!user) return res.status(404).json({ error: "User not found" });
 
-    const sendbirdId = await sendbirdService.provisionSendBirdUser(user);
-    const token = await sendbirdService.getSendbirdSessionToken(sendbirdId);
+    // Provision user and get their Stream ID
+    const streamId = await streamService.provisionStreamUser(user);
+    // Create a new token
+    const token = await streamService.getStreamSessionToken(streamId);
 
-    res.json({ token });
+    res.json({ 
+      token,
+      streamId: streamId,
+      streamApiKey: process.env.STREAM_API_KEY // Send API key to client
+    });
   } catch (err) {
     console.error("issueChatToken error:", err);
     res.status(500).json({ error: err.message });
@@ -63,26 +69,25 @@ exports.issueChatToken = async (req, res) => {
 // Send a message to a channel
 exports.sendMessage = async (req, res) => {
   try {
-    const { channelUrl, messageText, sendbirdToken } = req.body;
-    const token = sendbirdToken || req.user?.sendbirdToken;
-
-    if (!token) {
-      return res.status(401).json({ error: "Missing SendBird token" });
-    }
-
+    // Note: channelId is used instead of channelUrl
+    const { channelId, messageText } = req.body;
+    
     // Get user from DB
     const user = await db.Users.findByPk(req.user.id);
-    if (!user || !user.sendbird_id) {
+
+    // Check for the 'stream_id' column
+    if (!user || !user.stream_id) {
       return res.status(400).json({ error: "User not provisioned for chat" });
     }
 
-    const sendbirdId = user.sendbird_id; // Use correct DB field
+    const streamId = user.stream_id; // Use correct DB field
 
-    const message = await sendbirdService.sendMessage(
-      channelUrl,
+    // The new service doesn't need the user's session token to send
+    // a message from the backend.
+    const message = await streamService.sendMessage(
+      channelId,
       messageText,
-      sendbirdId,
-      token
+      streamId
     );
 
     res.status(200).json({ message });
